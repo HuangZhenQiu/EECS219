@@ -2,11 +2,13 @@ package edu.uci.eecs219.project2;
 
 import edu.uci.eecs219.project2.position.PositionCount;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -18,9 +20,12 @@ public class LocalDriver extends Configured implements Tool{
 			System.err.println("Usage: MaxTemperatureDriver <input path> <outputpath>");
 			System.exit(-1);
 		}
+		Configuration conf = getConf();
+		conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t");
 		
 		Job job = new Job();
 		job.setJarByClass(LocalDriver.class);
+		job.setInputFormatClass(KeyValueTextInputFormat.class);
 		job.setJobName("National Language Processing");
 		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
