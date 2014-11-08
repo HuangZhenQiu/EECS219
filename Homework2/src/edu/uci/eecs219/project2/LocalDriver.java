@@ -1,10 +1,12 @@
 package edu.uci.eecs219.project2;
 
-import edu.uci.eecs219.project2.position.PositionCount;
+import edu.uci.eecs219.project2.position.PositionCount.*;
+import edu.uci.eecs219.project2.count.WordPositionSentenceCount.*;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -14,6 +16,9 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 public class LocalDriver extends Configured implements Tool{
+	private static final String SENTENCE_COUNT_RESULT_PATH = "count";
+	private static final String CACHE_FILE = "part-r-00000";
+	
 	public int run(String[] args) throws Exception
 	{
 		if(args.length != 2) {
@@ -23,22 +28,39 @@ public class LocalDriver extends Configured implements Tool{
 		Configuration conf = getConf();
 		conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", "\t");
 		
-		Job job = new Job();
-		job.setJarByClass(LocalDriver.class);
-		job.setInputFormatClass(KeyValueTextInputFormat.class);
-		job.setJobName("National Language Processing");
+		Job sCounterJob = new Job();
+		sCounterJob.setJarByClass(LocalDriver.class);
+		sCounterJob.setInputFormatClass(KeyValueTextInputFormat.class);
+		sCounterJob.setJobName("Calculate how many sentences has particular position");
+		FileInputFormat.addInputPath(sCounterJob, new Path(args[0]));
+		FileOutputFormat.setOutputPath(sCounterJob, new Path(SENTENCE_COUNT_RESULT_PATH));
 		
-		FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		sCounterJob.setMapperClass(WordPositionSentenceCountMapper.class);
+		sCounterJob.setReducerClass(WordPositionSentenceCountReducer.class);
+		sCounterJob.setOutputKeyClass(Text.class);
+		sCounterJob.setOutputValueClass(IntWritable.class);
+		sCounterJob.waitForCompletion(true);
 		
-		job.setMapperClass(PositionCount.PositionCountMapper.class);
-		job.setReducerClass(PositionCount.PositionCountReducer.class);
+		Job pCounterJob = new Job();
+		pCounterJob.setJarByClass(LocalDriver.class);
+		pCounterJob.setInputFormatClass(KeyValueTextInputFormat.class);
+		pCounterJob.setJobName("Calculate how many sentences ");
 		
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
+		FileInputFormat.addInputPath(pCounterJob, new Path(args[0]));
+		FileOutputFormat.setOutputPath(pCounterJob, new Path(args[1]));
 		
-		System.exit(job.waitForCompletion(true) ? 0:1);
-		boolean success = job.waitForCompletion(true);
+		pCounterJob.setMapperClass(PositionCountMapper.class);
+		pCounterJob.setReducerClass(PositionCountReducer.class);
+		
+		pCounterJob.setOutputKeyClass(Text.class);
+		pCounterJob.setOutputValueClass(Text.class);
+		
+		
+		
+		
+		
+		
+		boolean success = pCounterJob.waitForCompletion(true);
 		return success ? 0 : 1;
 	}
 	
