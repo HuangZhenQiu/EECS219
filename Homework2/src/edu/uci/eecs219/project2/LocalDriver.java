@@ -1,6 +1,10 @@
 package edu.uci.eecs219.project2;
 
+import java.io.File;
+import java.net.URI;
+
 import edu.uci.eecs219.project2.position.PositionCount.*;
+import edu.uci.eecs219.project2.aggregate.SentenceProbabilityAggregator.*;
 import edu.uci.eecs219.project2.count.WordPositionSentenceCount.*;
 
 import org.apache.hadoop.conf.Configuration;
@@ -17,6 +21,7 @@ import org.apache.hadoop.util.ToolRunner;
 
 public class LocalDriver extends Configured implements Tool{
 	private static final String SENTENCE_COUNT_RESULT_PATH = "count";
+	private static final String SENTENCE_POSITION_RESULT_PATH = "position";
 	private static final String CACHE_FILE = "part-r-00000";
 	
 	public int run(String[] args) throws Exception
@@ -47,20 +52,31 @@ public class LocalDriver extends Configured implements Tool{
 		pCounterJob.setJobName("Calculate how many sentences ");
 		
 		FileInputFormat.addInputPath(pCounterJob, new Path(args[0]));
-		FileOutputFormat.setOutputPath(pCounterJob, new Path(args[1]));
+		FileOutputFormat.setOutputPath(pCounterJob, new Path(SENTENCE_POSITION_RESULT_PATH));
 		
 		pCounterJob.setMapperClass(PositionCountMapper.class);
 		pCounterJob.setReducerClass(PositionCountReducer.class);
 		
 		pCounterJob.setOutputKeyClass(Text.class);
 		pCounterJob.setOutputValueClass(Text.class);
+		pCounterJob.waitForCompletion(true);
+		
+		Job aggregatorJob = new Job();
+		aggregatorJob.setJarByClass(LocalDriver.class);
+		aggregatorJob.setInputFormatClass(KeyValueTextInputFormat.class);
+		aggregatorJob.setJobName("Calculate probabilty of each sentence");
+		aggregatorJob.addCacheFile(new URI("file:///home/hadoop/git/EECS219/Homework2/" + SENTENCE_COUNT_RESULT_PATH + File.separator + CACHE_FILE));
+		FileInputFormat.addInputPath(aggregatorJob, new Path(SENTENCE_POSITION_RESULT_PATH));
+		FileOutputFormat.setOutputPath(aggregatorJob, new Path(args[1]));
+		
+		aggregatorJob.setMapperClass(SentenceProbabilityAggregatorMapper.class);
+		aggregatorJob.setReducerClass(SentenceProbabilityAggregatorReducer.class);
+		aggregatorJob.setOutputKeyClass(Text.class);
+		aggregatorJob.setOutputValueClass(Text.class);
+		aggregatorJob.waitForCompletion(true);
 		
 		
-		
-		
-		
-		
-		boolean success = pCounterJob.waitForCompletion(true);
+		boolean success = aggregatorJob.waitForCompletion(true);
 		return success ? 0 : 1;
 	}
 	

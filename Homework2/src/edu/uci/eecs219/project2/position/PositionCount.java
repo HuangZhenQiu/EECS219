@@ -27,12 +27,10 @@ public class PositionCount {
 	}
 	
 	public static class PositionCountReducer extends Reducer<Text, Text, Text, Text> {
-		private Map<Integer, List<Integer>> posSentenceMap = new HashMap<Integer, List<Integer>>();
 				
 		@Override
 		public void reduce(Text key, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
-			posSentenceMap.clear();
 			String content = "";
 			for(Text value : values) {
 				content = content + " " +  value.toString();

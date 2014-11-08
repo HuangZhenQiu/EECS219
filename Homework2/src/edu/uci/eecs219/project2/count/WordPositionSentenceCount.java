@@ -28,7 +28,6 @@ public class WordPositionSentenceCount {
 	}
 	
 	public static class WordPositionSentenceCountReducer extends Reducer<Text, IntWritable, Text, Text> {
-		private Map<Integer, List<Integer>> posSentenceMap = new HashMap<Integer, List<Integer>>();
 				
 		@Override
 		public void reduce(Text key, Iterable<IntWritable> values, Context context)
