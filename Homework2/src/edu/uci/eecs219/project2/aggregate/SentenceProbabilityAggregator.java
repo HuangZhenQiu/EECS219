@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.Reader;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+import java.math.BigDecimal;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -91,17 +93,50 @@ public class SentenceProbabilityAggregator {
 	}
 	
 	public static class SentenceProbabilityAggregatorReducer extends Reducer<Text, Text, Text, Text> {
+		private static class Word implements Comparable {
+			private String content;
+			private Integer position;
+			private Float probability;
+			
+			public Word(String content, Integer position, Float probability) {
+				this.content = content;
+				this.position = position;
+				this.probability = probability;  // Normalizer
+			}
+
+			@Override
+			public int compareTo(Object o) {
+				// TODO Auto-generated method stub
+				if (o instanceof Word) {
+					Word word = (Word) o;
+					return this.position.compareTo(word.position);
+				}
+				return 1;
+			}
+		}
 				
 		@Override
 		public void reduce(Text key, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
+			BigDecimal sentenceProability =  new BigDecimal(1);
+			List<Word> words =  new ArrayList<Word>();
 			StringBuffer buffer = new StringBuffer();
 			for (Text text : values) {
-				buffer.append(text.toString());
-				buffer.append(" ");
+				StringTokenizer tokenizer = new StringTokenizer(text.toString().trim());
+				String position = tokenizer.nextToken();
+				String content = tokenizer.nextToken();
+				String probability = tokenizer.nextToken();
+				words.add(new Word(content, Integer.parseInt(position), Float.parseFloat(probability)));
 			}
 			
-			context.write(key, new Text(buffer.toString()));
+			Collections.sort(words);
+			for (Word word : words) {
+				buffer.append(word.content);
+				buffer.append(" ");
+				sentenceProability = sentenceProability.multiply(new BigDecimal(word.probability));
+			}
+			
+			context.write(new Text(sentenceProability.toEngineeringString()), new Text(buffer.toString()));
 		}
 		
 		@Override

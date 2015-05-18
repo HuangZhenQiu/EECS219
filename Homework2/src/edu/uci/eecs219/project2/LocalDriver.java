@@ -27,7 +27,7 @@ public class LocalDriver extends Configured implements Tool{
 	public int run(String[] args) throws Exception
 	{
 		if(args.length != 2) {
-			System.err.println("Usage: MaxTemperatureDriver <input path> <outputpath>");
+			System.err.println("Usage: Sentence Probability Driver <input path> <outputpath>");
 			System.exit(-1);
 		}
 		Configuration conf = getConf();
