@@ -1,4 +1,4 @@
-package eecs.uci.eecs219.project3.load;
+package edu.uci.eecs219.project3.load;
 
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;

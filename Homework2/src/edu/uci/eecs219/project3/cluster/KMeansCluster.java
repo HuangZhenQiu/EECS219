@@ -1,4 +1,4 @@
-package eecs.uci.eecs219.project3.cluster;
+package edu.uci.eecs219.project3.cluster;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,8 +20,8 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
+import edu.uci.eecs219.project3.LocalDriver.State;
 import edu.uci.eecs219.util.HbaseUtil;
-import eecs.uci.eecs219.project3.LocalDriver.State;
 
 
 /***

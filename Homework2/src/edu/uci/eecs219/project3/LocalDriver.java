@@ -1,8 +1,8 @@
-package eecs.uci.eecs219.project3;
+package edu.uci.eecs219.project3;
 
+import edu.uci.eecs219.project3.cluster.KMeansCluster;
+import edu.uci.eecs219.project3.load.DataLoader;
 import edu.uci.eecs219.util.HbaseUtil;
-import eecs.uci.eecs219.project3.cluster.KMeansCluster;
-import eecs.uci.eecs219.project3.load.DataLoader;
 
 import java.io.IOException;
 import java.util.Random;
