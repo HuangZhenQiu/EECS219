@@ -134,6 +134,10 @@ public class HbaseUtil {
 				}
 			}
 		}
+
+		for (int i = 0; i < centerValues.size(); i++) {
+			centerValues.set(i, centerValues.get(i)/ number);
+		}
 		
 		return centerValues;
 	}
