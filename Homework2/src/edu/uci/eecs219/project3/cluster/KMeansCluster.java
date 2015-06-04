@@ -20,7 +20,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
-import edu.uci.eecs219.project3.LocalDriver.State;
+import edu.uci.eecs219.project3.LocalDriver2.State;
 import edu.uci.eecs219.util.HbaseUtil;
 
 

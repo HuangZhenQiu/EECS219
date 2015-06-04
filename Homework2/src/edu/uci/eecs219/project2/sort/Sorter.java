@@ -29,7 +29,7 @@ public class Sorter {
 
 		@Override
 		public int compare(Sentence s1, Sentence s2) {
-			return 0 - s1.probability.compareTo(s2.probability);
+			return s1.probability.compareTo(s2.probability);
 		}
 	}
 	
@@ -76,8 +76,12 @@ public class Sorter {
 		@Override
 		public void cleanup(Context context) throws InterruptedException, IOException {
 			while(queue.size() > 0) {
-				Sentence sentence = queue.poll();
-				context.write(new Text(sentence.content), new Text(sentence.probability.toPlainString()));
+				Sentence sentence1 = queue.poll();
+				Sentence sentence2 = queue.poll();
+				Sentence sentence3 = queue.poll();
+				context.write(new Text(sentence3.content), new Text(sentence3.probability.toPlainString()));
+				context.write(new Text(sentence2.content), new Text(sentence2.probability.toPlainString()));
+				context.write(new Text(sentence1.content), new Text(sentence1.probability.toPlainString()));
 			}
 		}
 	}

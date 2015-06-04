@@ -25,7 +25,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class LocalDriver extends Configured implements Tool{
+public class LocalDriver2 extends Configured implements Tool{
 	
 	// Used for counter key word
 	public static enum State {
@@ -129,7 +129,7 @@ public class LocalDriver extends Configured implements Tool{
 	}
 
 	public static void main(String[] args) throws Exception {
-		LocalDriver driver = new LocalDriver();
+		LocalDriver2 driver = new LocalDriver2();
 		int exitCode = ToolRunner.run(driver, args);
 		System.exit(exitCode);
 	}

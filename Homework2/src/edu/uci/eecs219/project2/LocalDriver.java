@@ -70,7 +70,7 @@ public class LocalDriver extends Configured implements Tool{
 		aggregatorJob.setJarByClass(LocalDriver.class);
 		aggregatorJob.setInputFormatClass(KeyValueTextInputFormat.class);
 		aggregatorJob.setJobName("Calculate probabilty of each sentence");
-		aggregatorJob.addCacheFile(new URI("file:///home/hadoop/git/EECS219/Homework2/" + SENTENCE_COUNT_RESULT_PATH + File.separator + CACHE_FILE));
+		aggregatorJob.addCacheFile(new URI("file:///Users/Peter/git/EECS219/Homework2/" + SENTENCE_COUNT_RESULT_PATH + File.separator + CACHE_FILE));
 		FileInputFormat.addInputPath(aggregatorJob, new Path(SENTENCE_POSITION_RESULT_PATH));
 		FileOutputFormat.setOutputPath(aggregatorJob, new Path(SENTENCE_AGGREGATION_RESULT_PATH));
 		

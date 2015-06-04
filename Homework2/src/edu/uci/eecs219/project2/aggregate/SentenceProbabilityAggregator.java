@@ -46,6 +46,7 @@ public class SentenceProbabilityAggregator {
 					List<Integer> sids = positionSidMap.get(position);
 					if (sids == null) {
 						sids = new ArrayList<Integer>();
+						sids.add(sentenceId);
 						positionSidMap.put(position, sids);
 					} else {
 						sids.add(sentenceId);
